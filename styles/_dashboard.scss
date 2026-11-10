@@ -1,0 +1,209 @@
+// Piezas propias del dashboard: encabezado de página, KPIs, leyendas y línea de tiempo.
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.75rem;
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(1.5rem, 2.2vw, 1.875rem);
+  }
+}
+
+// ---------------------------------------------------------------- KPI
+.kpi-card {
+  --kpi-color: var(--app-chart-1);
+  --kpi-on: var(--app-chart-1-on);
+  height: 100%;
+  overflow: hidden;
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  // Icono en baldosa sólida con el color de la serie y su color de contraste.
+  &__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    color: var(--kpi-on);
+    background: var(--kpi-color);
+    box-shadow: 0 8px 18px -10px var(--kpi-color);
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    color: var(--cui-secondary-color);
+  }
+
+  &__value {
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--cui-emphasis-color);
+  }
+
+  &__spark {
+    height: 2.75rem;
+    margin-inline: -0.25rem;
+  }
+}
+
+.kpi-card--c2 {
+  --kpi-color: var(--app-chart-2);
+  --kpi-on: var(--app-chart-2-on);
+}
+
+.kpi-card--c3 {
+  --kpi-color: var(--app-chart-3);
+  --kpi-on: var(--app-chart-3-on);
+}
+
+.kpi-card--c4 {
+  --kpi-color: var(--app-chart-4);
+  --kpi-on: var(--app-chart-4-on);
+}
+
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 50rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &--up {
+    color: var(--cui-success-text-emphasis);
+    background: var(--cui-success-bg-subtle);
+  }
+
+  &--down {
+    color: var(--cui-danger-text-emphasis);
+    background: var(--cui-danger-bg-subtle);
+  }
+}
+
+// ---------------------------------------------------------------- Tarjetas
+.card-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.0625rem;
+  }
+}
+
+.legend-dot {
+  display: inline-block;
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+}
+
+.legend-line {
+  display: inline-block;
+  width: 1rem;
+  border-top: 2px dashed currentColor;
+}
+
+// Centro del doughnut.
+.donut {
+  position: relative;
+  max-width: 13rem;
+  margin-inline: auto;
+
+  &__center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  &__value {
+    font-family: var(--font-display), sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--cui-emphasis-color);
+  }
+}
+
+// ---------------------------------------------------------------- Tabla
+.table-orders {
+  --cui-table-bg: transparent;
+  margin-bottom: 0;
+
+  th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cui-secondary-color);
+    white-space: nowrap;
+  }
+
+  td {
+    white-space: nowrap;
+  }
+}
+
+// ---------------------------------------------------------------- Línea de tiempo
+.timeline {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    position: relative;
+    display: flex;
+    gap: 0.875rem;
+    padding-bottom: 1.25rem;
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+
+    &:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 2.25rem;
+      bottom: 0.25rem;
+      inset-inline-start: 1rem;
+      width: 1px;
+      background: var(--cui-border-color);
+    }
+  }
+
+  &__icon {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+  }
+
+  &__time {
+    font-size: 0.8125rem;
+    color: var(--cui-tertiary-color);
+  }
+}

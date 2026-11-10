@@ -1,0 +1,268 @@
+// =============================================================================
+// Temas de color de CentralApp
+//
+// El CSS de CoreUI se compila una sola vez con el tema base "Sol" (theme.scss).
+// Cada tema alternativo se activa con <html data-app-theme="…"> y aquí se generan
+// solo las piezas que dependen del color: variables de CoreUI (claro y oscuro),
+// botones (con los mixins de CoreUI), los SVG de checkbox/switch y los tokens
+// propios. El texto sobre cada color se calcula con color-contrast() de CoreUI.
+//
+// Mantener los ids y nombres sincronizados con lib/theme/themes.ts.
+// =============================================================================
+
+@use "sass:color";
+@use "sass:list";
+@use "sass:map";
+@use "@coreui/coreui/scss/functions" as *;
+@use "@coreui/coreui/scss/mixins" as *;
+
+$app-themes: (
+  "oceano": (
+    primary: #0369a1,
+    primary-dark: #38bdf8,
+    accent: #06b6d4,
+    accent-dark: #22d3ee,
+    charts: (#0369a1, #06b6d4, #f59e0b, #8b5cf6),
+    charts-dark: (#38bdf8, #22d3ee, #fbbf24, #a78bfa),
+    target: #0f172a,
+    target-dark: #f8fafc,
+    gradient: linear-gradient(140deg, #0ea5e9 0%, #0369a1 50%, #1e3a8a 100%),
+    halo: rgba(34, 211, 238, 0.45),
+    logo: (#38bdf8, #1e40af),
+    light: (canvas: #eef3f8, tertiary: #f1f5f9, border: #e2e8f0),
+    dark: (body: #0b1220, secondary: #1b2638, tertiary: #162032, border: #1e293b, card: #111a2b),
+  ),
+  "esmeralda": (
+    primary: #047857,
+    primary-dark: #34d399,
+    accent: #84cc16,
+    accent-dark: #a3e635,
+    charts: (#047857, #84cc16, #0ea5e9, #f59e0b),
+    charts-dark: (#34d399, #a3e635, #38bdf8, #fbbf24),
+    target: #052e16,
+    target-dark: #f0fdf4,
+    gradient: linear-gradient(140deg, #10b981 0%, #047857 50%, #064e3b 100%),
+    halo: rgba(163, 230, 53, 0.4),
+    logo: (#34d399, #065f46),
+    light: (canvas: #eff5f1, tertiary: #f0f5f2, border: #dfe9e3),
+    dark: (body: #08130f, secondary: #17261f, tertiary: #12201a, border: #1c2b24, card: #0e1b15),
+    sidebar: (bg: #052e22, secondary: #0d3b2f, tertiary: #0a3428, border: #0f4436),
+  ),
+  "coral": (
+    primary: #e11d48,
+    primary-dark: #fb7185,
+    accent: #fb923c,
+    accent-dark: #fdba74,
+    charts: (#e11d48, #fb923c, #8b5cf6, #0ea5e9),
+    charts-dark: (#fb7185, #fdba74, #a78bfa, #38bdf8),
+    target: #1c1917,
+    target-dark: #fafaf9,
+    gradient: linear-gradient(140deg, #fb7185 0%, #e11d48 50%, #881337 100%),
+    halo: rgba(253, 186, 116, 0.5),
+    logo: (#fb7185, #be123c),
+    light: (canvas: #fbf3f2, tertiary: #f9f0ef, border: #f0e2e0),
+    dark: (body: #150c0e, secondary: #2a191d, tertiary: #211418, border: #2e1c20, card: #1d1114),
+  ),
+  "lavanda": (
+    primary: #7c3aed,
+    primary-dark: #a78bfa,
+    accent: #ec4899,
+    accent-dark: #f472b6,
+    charts: (#7c3aed, #ec4899, #14b8a6, #f59e0b),
+    charts-dark: (#a78bfa, #f472b6, #2dd4bf, #fbbf24),
+    target: #1e1b4b,
+    target-dark: #f5f3ff,
+    gradient: linear-gradient(140deg, #a78bfa 0%, #7c3aed 50%, #4c1d95 100%),
+    halo: rgba(244, 114, 182, 0.45),
+    logo: (#a78bfa, #5b21b6),
+    light: (canvas: #f4f2fa, tertiary: #f3f1f9, border: #e6e2f2),
+    dark: (body: #100d19, secondary: #221d33, tertiary: #1b1729, border: #282238, card: #171324),
+  ),
+  "grafito": (
+    primary: #18181b,
+    primary-dark: #fafafa,
+    accent: #f59e0b,
+    accent-dark: #fbbf24,
+    // En monocromo los enlaces llevan el acento para distinguirse del texto.
+    link: #b45309,
+    link-dark: #fbbf24,
+    charts: (#18181b, #f59e0b, #71717a, #a1a1aa),
+    charts-dark: (#fafafa, #fbbf24, #a1a1aa, #52525b),
+    target: #f59e0b,
+    target-dark: #fbbf24,
+    gradient: linear-gradient(140deg, #3f3f46 0%, #18181b 55%, #09090b 100%),
+    halo: rgba(245, 158, 11, 0.35),
+    logo: (#3f3f46, #09090b),
+    light: (canvas: #f4f4f5, tertiary: #f4f4f5, border: #e4e4e7),
+    dark: (body: #09090b, secondary: #1f1f23, tertiary: #18181b, border: #27272a, card: #121214),
+    sidebar: (bg: #09090b, secondary: #1f1f23, tertiary: #18181b, border: #27272a),
+  ),
+);
+
+// --- SVG de checkbox, radio y switch con el color de contraste del tema -------
+@mixin form-check-images($on) {
+  .form-check-input:checked[type="checkbox"] {
+    --cui-form-check-bg-image: #{escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{$on}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/></svg>"))};
+  }
+
+  .form-check-input:checked[type="radio"] {
+    --cui-form-check-bg-image: #{escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#{$on}'/></svg>"))};
+  }
+
+  .form-switch .form-check-input:checked {
+    --cui-form-switch-bg: #{escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$on}'/></svg>"))};
+  }
+}
+
+@function link-color-for($color) {
+  @return if(sass(contrast-ratio(#fff, $color) >= 4.5): $color; else: shade-color($color, 35%));
+}
+
+@each $id, $t in $app-themes {
+  $primary: map.get($t, primary);
+  $primary-dark: map.get($t, primary-dark);
+  $accent: map.get($t, accent);
+  $accent-dark: map.get($t, accent-dark);
+  $on: color-contrast($primary);
+  $on-dark: color-contrast($primary-dark);
+  $link: map.get($t, link) or link-color-for($primary);
+  $link-dark: map.get($t, link-dark) or tint-color($primary-dark, 25%);
+  $charts: map.get($t, charts);
+  $charts-dark: map.get($t, charts-dark);
+  $light: map.get($t, light);
+  $dark: map.get($t, dark);
+  $logo: map.get($t, logo);
+  $sidebar: map.get($t, sidebar);
+
+  // ------------------------------------------------------------- modo claro
+  [data-app-theme="#{$id}"] {
+    --cui-primary: #{$primary};
+    --cui-primary-rgb: #{to-rgb($primary)};
+    --cui-primary-text-emphasis: #{shade-color($primary, 60%)};
+    --cui-primary-bg-subtle: #{tint-color($primary, 86%)};
+    --cui-primary-border-subtle: #{tint-color($primary, 55%)};
+    --cui-link-color: #{$link};
+    --cui-link-color-rgb: #{to-rgb($link)};
+    --cui-link-hover-color: #{shade-color($link, 20%)};
+    --cui-link-hover-color-rgb: #{to-rgb(shade-color($link, 20%))};
+    --cui-tertiary-bg: #{map.get($light, tertiary)};
+    --cui-border-color: #{map.get($light, border)};
+
+    --app-on-primary: #{$on};
+    --app-focus-border: #{$primary};
+    --app-focus-ring: #{rgba($primary, 0.3)};
+    --app-primary-dark: #{$primary-dark};
+    --app-primary-dark-rgb: #{to-rgb($primary-dark)};
+    --app-on-primary-dark: #{$on-dark};
+    --app-accent: #{$accent};
+    --app-wordmark-accent: #{$link};
+    --app-highlight: #{rgba($accent, 0.38)};
+    --app-canvas: #{map.get($light, canvas)};
+    --app-card-bg: #fff;
+    --app-chart-target: #{map.get($t, target)};
+    @for $i from 1 through 4 {
+      $c: list.nth($charts, $i);
+      --app-chart-#{$i}: #{$c};
+      --app-chart-#{$i}-on: #{color-contrast($c)};
+    }
+
+    --app-brand-gradient: #{map.get($t, gradient)};
+    --app-aside-fg: #fff;
+    --app-aside-muted: rgba(255, 255, 255, 0.82);
+    --app-aside-dots: rgba(255, 255, 255, 0.16);
+    --app-aside-halo: #{map.get($t, halo)};
+    --app-aside-chip-bg: rgba(255, 255, 255, 0.16);
+    --app-aside-chip-fg: #fff;
+    --app-aside-wordmark: #{tint-color($accent-dark, 35%)};
+    --app-aside-bar: #{rgba($primary-dark, 0.4)};
+    --app-aside-bar-strong: #{$primary-dark};
+    --app-logo-from: #{list.nth($logo, 1)};
+    --app-logo-to: #{list.nth($logo, 2)};
+    --app-logo-stroke: #fff;
+    --app-logo-dot: #{$accent-dark};
+    --app-logo-inverted-bg: #fff;
+    --app-logo-inverted-stroke: #{$primary};
+
+    @include form-check-images($on);
+
+    .btn-primary {
+      @include button-variant($primary, $primary);
+    }
+
+    .btn-outline-primary {
+      @include button-outline-variant($primary);
+    }
+  }
+
+  // ------------------------------------------------------------- modo oscuro
+  [data-app-theme="#{$id}"][data-coreui-theme="dark"] {
+    --cui-primary: #{$primary-dark};
+    --cui-primary-rgb: #{to-rgb($primary-dark)};
+    --cui-primary-text-emphasis: #{tint-color($primary-dark, 50%)};
+    --cui-primary-bg-subtle: #{rgba($primary-dark, 0.16)};
+    --cui-primary-border-subtle: #{shade-color($primary-dark, 55%)};
+    --cui-link-color: #{$link-dark};
+    --cui-link-color-rgb: #{to-rgb($link-dark)};
+    --cui-link-hover-color: #{tint-color($link-dark, 30%)};
+    --cui-link-hover-color-rgb: #{to-rgb(tint-color($link-dark, 30%))};
+    --cui-body-bg: #{map.get($dark, body)};
+    --cui-body-bg-rgb: #{to-rgb(map.get($dark, body))};
+    --cui-secondary-bg: #{map.get($dark, secondary)};
+    --cui-tertiary-bg: #{map.get($dark, tertiary)};
+    --cui-border-color: #{map.get($dark, border)};
+
+    --app-on-primary: #{$on-dark};
+    --app-focus-border: #{$primary-dark};
+    --app-focus-ring: #{rgba($primary-dark, 0.3)};
+    --app-accent: #{$accent-dark};
+    --app-wordmark-accent: #{$primary-dark};
+    --app-highlight: #{rgba($accent-dark, 0.3)};
+    --app-canvas: #{map.get($dark, body)};
+    --app-card-bg: #{map.get($dark, card)};
+    --app-chart-target: #{map.get($t, target-dark)};
+    @for $i from 1 through 4 {
+      $c: list.nth($charts-dark, $i);
+      --app-chart-#{$i}: #{$c};
+      --app-chart-#{$i}-on: #{color-contrast($c)};
+    }
+
+    @include form-check-images($on-dark);
+
+    .btn-primary {
+      @include button-variant($primary-dark, $primary-dark);
+    }
+
+    .btn-outline-primary {
+      @include button-outline-variant($primary-dark);
+    }
+  }
+
+  // ------------------------------------------------------- sidebar oscuro
+  // Replica las variables de `.sidebar-dark` de CoreUI solo con CSS, para que
+  // el sidebar no parpadee claro→oscuro mientras React hidrata.
+  @if $sidebar {
+    [data-app-theme="#{$id}"] .app-sidebar {
+      color-scheme: dark;
+      --cui-body-color: rgba(255, 255, 255, 0.87);
+      --cui-body-bg: #{map.get($sidebar, bg)};
+      --cui-body-bg-rgb: #{to-rgb(map.get($sidebar, bg))};
+      --cui-emphasis-color: #fff;
+      --cui-emphasis-color-rgb: 255, 255, 255;
+      --cui-secondary-color: rgba(255, 255, 255, 0.6);
+      --cui-secondary-bg: #{map.get($sidebar, secondary)};
+      --cui-tertiary-color: rgba(255, 255, 255, 0.42);
+      --cui-tertiary-bg: #{map.get($sidebar, tertiary)};
+      --cui-border-color: #{map.get($sidebar, border)};
+      --cui-primary: #{$primary-dark};
+      --cui-primary-rgb: #{to-rgb($primary-dark)};
+      --app-on-primary: #{$on-dark};
+      --app-wordmark-accent: #{$primary-dark};
+      --cui-link-color: #{$link-dark};
+      --cui-link-color-rgb: #{to-rgb($link-dark)};
+
+      .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+      }
+    }
+  }
+}

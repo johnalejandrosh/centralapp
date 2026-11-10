@@ -1,0 +1,310 @@
+// Integraciones: catálogo de servicios, conexiones, guía de Pancake POS y panel de sincronización.
+
+// ---------------------------------------------------------------- Catálogo
+.integration-card {
+  &__logo {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    background: var(--cui-primary);
+    color: var(--app-on-primary);
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.0625rem;
+  }
+
+  &__desc {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: var(--cui-secondary-color);
+  }
+
+  &__syncs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      padding: 0.125rem 0.625rem;
+      border-radius: 50rem;
+      background: var(--cui-tertiary-bg);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--cui-secondary-color);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto;
+    padding-top: 1rem;
+  }
+}
+
+// ---------------------------------------------------------------- Conexiones
+.integration-empty {
+  padding: 2rem 1rem;
+  border: 2px dashed var(--cui-border-color);
+  border-radius: var(--cui-border-radius-lg);
+  text-align: center;
+}
+
+.integration-error {
+  max-width: 18rem;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Botón "ojo" del campo de API key (mostrar / ocultar).
+.secret-field__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  white-space: nowrap;
+  --cui-btn-border-color: var(--cui-border-color);
+  --cui-btn-color: var(--cui-secondary-color);
+  --cui-btn-hover-bg: var(--cui-tertiary-bg);
+  --cui-btn-hover-border-color: var(--cui-border-color);
+  --cui-btn-hover-color: var(--cui-emphasis-color);
+  --cui-btn-active-bg: var(--cui-tertiary-bg);
+  --cui-btn-active-border-color: var(--cui-border-color);
+  --cui-btn-active-color: var(--cui-emphasis-color);
+
+  &[aria-pressed="true"] {
+    color: var(--cui-emphasis-color);
+  }
+}
+
+// Pasos para conseguir credenciales, dentro del formulario de conexión.
+.setup-steps {
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--cui-border-radius);
+  background: var(--cui-tertiary-bg);
+  font-size: 0.8125rem;
+
+  summary {
+    font-weight: 600;
+    color: var(--cui-emphasis-color);
+    cursor: pointer;
+  }
+
+  ol {
+    margin: 0.5rem 0 0;
+    padding-inline-start: 1.25rem;
+    color: var(--cui-secondary-color);
+  }
+
+  li + li {
+    margin-top: 0.25rem;
+  }
+}
+
+// ---------------------------------------------------------------- Guía
+.integration-flow {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1.25rem 0 1rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: flow;
+
+  li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 0.625rem 0.875rem 0.625rem 2.75rem;
+    border: 1px solid var(--cui-border-color);
+    border-radius: var(--cui-border-radius);
+    font-size: 0.8125rem;
+    counter-increment: flow;
+
+    &::before {
+      content: counter(flow);
+      position: absolute;
+      inset-inline-start: 0.75rem;
+      top: 0.7rem;
+      display: grid;
+      place-items: center;
+      width: 1.375rem;
+      height: 1.375rem;
+      border-radius: 50%;
+      background: var(--cui-tertiary-bg);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--cui-secondary-color);
+    }
+
+    // Conector vertical entre pasos.
+    & + li::after {
+      content: "";
+      position: absolute;
+      inset-inline-start: 1.4rem;
+      top: -0.55rem;
+      height: 0.55rem;
+      border-inline-start: 2px solid var(--cui-border-color);
+    }
+
+    strong {
+      color: var(--cui-emphasis-color);
+    }
+
+    span {
+      color: var(--cui-secondary-color);
+    }
+  }
+}
+
+.guide-steps {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+
+  li {
+    position: relative;
+    padding-inline-start: 2.75rem;
+    counter-increment: step;
+
+    &::before {
+      content: counter(step);
+      position: absolute;
+      inset-inline-start: 0;
+      top: 0;
+      display: grid;
+      place-items: center;
+      width: 1.875rem;
+      height: 1.875rem;
+      border-radius: 50%;
+      background: var(--cui-primary);
+      color: var(--app-on-primary);
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+  }
+
+  &__title {
+    margin: 0.25rem 0 0.25rem;
+    font-weight: 600;
+    color: var(--cui-emphasis-color);
+  }
+
+  &__body {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--cui-secondary-color);
+  }
+}
+
+.guide-code {
+  margin: 0;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--cui-border-color);
+  border-radius: var(--cui-border-radius);
+  background: var(--cui-tertiary-bg);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-x: auto;
+
+  code {
+    color: var(--cui-body-color);
+  }
+}
+
+.guide-formula {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--cui-border-radius);
+  background: rgba(var(--cui-primary-rgb), 0.12);
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-weight: 600;
+  text-align: center;
+  color: var(--cui-emphasis-color);
+}
+
+.sync-data {
+  display: grid;
+  gap: 0.875rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li + li {
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--cui-border-color);
+  }
+
+  p {
+    margin-top: 0.25rem;
+  }
+}
+
+// ---------------------------------------------------------------- Panel de sincronización
+.sync-result {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--cui-border-color);
+  transition: opacity 0.15s;
+
+  &.is-loading {
+    opacity: 0.55;
+  }
+}
+
+.sync-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+.sync-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--cui-border-color);
+  border-radius: var(--cui-border-radius-lg);
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cui-secondary-color);
+  }
+
+  &__value {
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--cui-emphasis-color);
+  }
+
+  &__hint {
+    font-size: 0.75rem;
+    color: var(--cui-tertiary-color);
+  }
+}
+
+.sync-query {
+  overflow-wrap: anywhere;
+}

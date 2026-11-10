@@ -1,0 +1,104 @@
+// Tokens propios de CentralApp que CoreUI no define (gráficas, acentos, panel de marca…).
+// Estos son los valores del tema base "Sol"; _themes.scss los sobrescribe por tema.
+
+:root,
+[data-coreui-theme="light"] {
+  --app-ink: #1c1917;
+
+  // Color principal y su texto encima (CoreUI ya define --cui-primary).
+  --app-on-primary: #1c1917;
+  --app-focus-border: #eab308;
+  --app-focus-ring: rgba(234, 179, 8, 0.4);
+  // Versión del color principal para superficies oscuras (sidebar oscuro).
+  --app-primary-dark: #facc15;
+  --app-primary-dark-rgb: 250, 204, 21;
+  --app-on-primary-dark: #1c1917;
+
+  --app-accent: #f97316;
+  --app-wordmark-accent: #ea580c;
+
+  // Gráficas (y el color de contraste de cada una para íconos sobre ellas).
+  --app-chart-1: #eab308;
+  --app-chart-2: #f97316;
+  --app-chart-3: #0ea5e9;
+  --app-chart-4: #ec4899;
+  --app-chart-1-on: #1c1917;
+  --app-chart-2-on: #1c1917;
+  --app-chart-3-on: #1c1917;
+  --app-chart-4-on: #1c1917;
+  --app-chart-target: #1c1917;
+
+  --app-highlight: rgba(250, 204, 21, 0.6);
+  --app-canvas: #f6f3ea;
+  --app-card-bg: #fff;
+
+  // Panel de marca (login/registro) y logo.
+  --app-brand-gradient: linear-gradient(140deg, #fde047 0%, #facc15 45%, #fb923c 100%);
+  --app-aside-fg: #1c1917;
+  --app-aside-muted: rgba(28, 25, 23, 0.78);
+  --app-aside-dots: rgba(28, 25, 23, 0.14);
+  --app-aside-halo: rgba(236, 72, 153, 0.35);
+  --app-aside-chip-bg: #1c1917;
+  --app-aside-chip-fg: #facc15;
+  --app-aside-wordmark: #9a3412;
+  --app-logo-from: #fde047;
+  --app-logo-to: #fb923c;
+  --app-logo-stroke: #1c1917;
+  --app-logo-dot: #1c1917;
+  --app-logo-inverted-bg: #1c1917;
+  --app-logo-inverted-stroke: #facc15;
+  --app-aside-bar: rgba(250, 204, 21, 0.35);
+  --app-aside-bar-strong: #facc15;
+}
+
+[data-coreui-theme="dark"] {
+  --app-on-primary: #1c1917;
+  --app-focus-border: #facc15;
+  --app-focus-ring: rgba(250, 204, 21, 0.35);
+  --app-accent: #fb923c;
+  --app-wordmark-accent: #facc15;
+  --app-chart-1: #facc15;
+  --app-chart-2: #fb923c;
+  --app-chart-3: #38bdf8;
+  --app-chart-4: #f472b6;
+  --app-chart-target: #fafaf9;
+  --app-highlight: rgba(250, 204, 21, 0.35);
+  --app-canvas: #141210;
+  --app-card-bg: #1d1a18;
+}
+
+h1,
+h2,
+h3,
+.h1,
+.h2,
+.h3 {
+  letter-spacing: -0.02em;
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cui-secondary-color);
+}
+
+// Subrayado tipo marcador con el color del tema.
+.highlight {
+  padding-inline: 0.1em;
+  background: linear-gradient(transparent 60%, var(--app-highlight) 60%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+// Avatar con el color principal del tema.
+.avatar-brand {
+  background: var(--cui-primary);
+  color: var(--app-on-primary);
+  font-weight: 600;
+}

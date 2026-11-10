@@ -1,0 +1,255 @@
+// Configuración → Mi perfil.
+
+// ---------------------------------------------------------------- Tarjeta de identidad
+.profile-card {
+  overflow: hidden;
+
+  // En escritorio acompaña el scroll de la columna derecha (debajo del header sticky de 4.25rem).
+  @media (min-width: 1200px) {
+    position: sticky;
+    top: 5.75rem;
+  }
+
+  &__cover {
+    height: 6rem;
+    background:
+      radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.35), transparent 45%),
+      linear-gradient(120deg, var(--cui-primary), var(--app-chart-2));
+  }
+
+  &__body {
+    padding-top: 0;
+    text-align: center;
+  }
+
+  &__avatar {
+    margin-top: -2.25rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    font-size: 1.5rem;
+    box-shadow: 0 0 0 4px var(--app-card-bg), 0 10px 24px -12px rgba(var(--cui-primary-rgb), 0.9);
+  }
+
+  &__name {
+    margin: 0.875rem 0 0.125rem;
+    font-size: 1.25rem;
+  }
+
+  &__email {
+    margin-bottom: 0.875rem;
+    color: var(--cui-secondary-color);
+    word-break: break-word;
+  }
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  border-top: 1px solid var(--cui-border-color);
+
+  > div {
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 1rem 0.5rem;
+    text-align: center;
+  }
+
+  > div + div {
+    border-inline-start: 1px solid var(--cui-border-color);
+  }
+
+  dt {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--cui-secondary-color);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: var(--cui-emphasis-color);
+  }
+}
+
+// ---------------------------------------------------------------- Secciones
+.profile-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+
+  h2 {
+    margin: 0 0 0.125rem;
+    font-size: 1.0625rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--cui-secondary-color);
+  }
+}
+
+.profile-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 1.25rem 1.5rem;
+  margin: 0;
+
+  dt {
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cui-secondary-color);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 500;
+    color: var(--cui-emphasis-color);
+    overflow-wrap: anywhere;
+  }
+}
+
+.profile-note {
+  margin: 1.25rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cui-border-color);
+  font-size: 0.8125rem;
+  color: var(--cui-secondary-color);
+}
+
+// ---------------------------------------------------------------- Rol y permisos
+.profile-role {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  margin-bottom: 1rem;
+
+  &__name {
+    margin: 0;
+    font-weight: 600;
+    color: var(--cui-emphasis-color);
+  }
+
+  &__desc {
+    margin: 0.125rem 0 0;
+    font-size: 0.875rem;
+    color: var(--cui-secondary-color);
+  }
+}
+
+.profile-permissions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.75rem;
+
+  &__group {
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--cui-border-color);
+    border-radius: var(--cui-border-radius);
+
+    h3 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 0 0.625rem;
+      font-size: 0.9375rem;
+    }
+
+    ul {
+      display: grid;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    code {
+      font-size: 0.75rem;
+      color: var(--cui-tertiary-color);
+    }
+  }
+
+  &__count {
+    min-width: 1.5rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 50rem;
+    background: var(--cui-tertiary-bg);
+    font-size: 0.75rem;
+    color: var(--cui-secondary-color);
+    text-align: center;
+  }
+
+  &__check {
+    flex: none;
+    margin-top: 0.2rem;
+    color: var(--cui-success);
+  }
+}
+
+// ---------------------------------------------------------------- Sesiones
+.session-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid var(--cui-border-color);
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  &__icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    background: var(--cui-tertiary-bg);
+    color: var(--cui-secondary-color);
+  }
+
+  &.is-current &__icon {
+    background: var(--cui-primary);
+    color: var(--app-on-primary);
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: 600;
+    color: var(--cui-emphasis-color);
+  }
+
+  &__meta {
+    margin: 0.125rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--cui-secondary-color);
+  }
+}

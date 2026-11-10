@@ -1,0 +1,246 @@
+// Estructura del área privada: sidebar claro + header translúcido + lienzo cálido.
+
+// ---------------------------------------------------------------- Lienzo
+.app-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-inline: var(--cui-sidebar-occupy-start, 0) var(--cui-sidebar-occupy-end, 0);
+  background: var(--app-canvas);
+  transition: padding 0.15s;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.app-content {
+  flex: 1 1 auto;
+  padding-block: 1.75rem 2rem;
+}
+
+// ---------------------------------------------------------------- Sidebar
+.app-sidebar {
+  border-inline-end: 1px solid var(--cui-border-color);
+
+  .sidebar-header {
+    min-height: 4.25rem;
+    padding-inline: 1.125rem 0.75rem;
+    border: 0;
+  }
+
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    justify-content: flex-start;
+    color: var(--cui-emphasis-color);
+    text-decoration: none;
+  }
+
+  .nav-title {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+  }
+
+  .nav-link {
+    font-weight: 500;
+  }
+
+  // Píldora activa con el color del tema y un leve relieve; conserva el relleno en hover.
+  .nav-link.active,
+  .nav-link.active:hover {
+    font-weight: 600;
+    color: var(--cui-sidebar-nav-link-active-color);
+    background: var(--cui-sidebar-nav-link-active-bg);
+    box-shadow: 0 6px 16px -8px rgba(var(--cui-primary-rgb), 0.85);
+  }
+
+  .sidebar-footer {
+    padding: 0.75rem;
+    border-top: 1px solid var(--cui-border-color);
+  }
+}
+
+.sidebar-collapse-btn {
+  margin-inline-start: auto;
+  color: var(--cui-tertiary-color);
+
+  &:hover {
+    color: var(--cui-emphasis-color);
+  }
+}
+
+// Tarjeta de usuario al pie del sidebar.
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.5rem;
+  border: 0;
+  border-radius: var(--cui-border-radius);
+  background: transparent;
+  color: inherit;
+  text-align: start;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(var(--cui-emphasis-color-rgb), 0.05);
+  }
+
+  .avatar {
+    flex: none;
+  }
+
+  &__meta {
+    min-width: 0;
+    line-height: 1.25;
+  }
+
+  &__name,
+  &__email {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__name {
+    font-weight: 600;
+    color: var(--cui-emphasis-color);
+  }
+
+  &__email {
+    font-size: 0.8125rem;
+    color: var(--cui-secondary-color);
+  }
+}
+
+// ---------------------------------------------------------------- Header
+.app-header {
+  position: sticky;
+  min-height: 4.25rem;
+  border-bottom: 1px solid var(--cui-border-color);
+  backdrop-filter: saturate(160%) blur(12px);
+  -webkit-backdrop-filter: saturate(160%) blur(12px);
+
+  // Franja superior con el degradado de marca.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: var(--app-brand-gradient);
+  }
+}
+
+.header-search {
+  position: relative;
+  width: min(26rem, 100%);
+
+  .icon {
+    position: absolute;
+    inset-inline-start: 0.875rem;
+    top: 50%;
+    translate: 0 -50%;
+    color: var(--cui-tertiary-color);
+    pointer-events: none;
+  }
+
+  .form-control {
+    padding-inline-start: 2.5rem;
+    border-radius: 50rem;
+    background: var(--cui-tertiary-bg);
+    border-color: transparent;
+
+    &:focus {
+      background: var(--cui-body-bg);
+      border-color: var(--cui-primary);
+    }
+  }
+}
+
+.icon-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--cui-border-color);
+  border-radius: 50rem;
+  background: var(--cui-body-bg);
+  color: var(--cui-secondary-color);
+
+  &:hover:not(:disabled) {
+    color: var(--cui-emphasis-color);
+    border-color: var(--cui-secondary-color);
+  }
+
+  &__dot {
+    position: absolute;
+    top: 0.55rem;
+    inset-inline-end: 0.6rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border: 2px solid var(--cui-body-bg);
+    border-radius: 50%;
+    background: var(--app-accent);
+  }
+}
+
+// Selector de tema segmentado (claro / oscuro / sistema).
+.theme-segmented {
+  display: inline-flex;
+  padding: 0.1875rem;
+  gap: 0.125rem;
+  border: 1px solid var(--cui-border-color);
+  border-radius: 50rem;
+  background: var(--cui-tertiary-bg);
+
+  button {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 50rem;
+    background: transparent;
+    color: var(--cui-secondary-color);
+
+    &:hover {
+      color: var(--cui-emphasis-color);
+    }
+
+    &[aria-pressed="true"] {
+      background: var(--cui-primary);
+      color: var(--app-ink);
+      box-shadow: var(--cui-box-shadow-sm);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- Footer
+.app-footer {
+  font-size: 0.8125rem;
+  color: var(--cui-secondary-color);
+}
+
+// ---------------------------------------------------------------- Marca
+.brand-mark {
+  flex: none;
+  display: block;
+}
+
+.brand-wordmark {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+
+  span {
+    color: var(--app-wordmark-accent);
+  }
+}

@@ -1,0 +1,131 @@
+// Esquema de CentralApp. La conexión se configura en prisma.config.ts
+// (variables DB_* del .env); las tablas viven en el esquema DB_SHEMA.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String        @db.VarChar(120)
+  email        String        @unique @db.VarChar(254)
+  passwordHash String        @map("password_hash")
+  active       Boolean       @default(true)
+  roleId       String        @map("role_id")
+  role         Role          @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  lastLoginAt  DateTime?     @map("last_login_at")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  sessions     Session[]
+  integrations Integration[]
+
+  @@index([roleId])
+  @@map("users")
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique @db.VarChar(60)
+  description String?          @db.VarChar(255)
+  /// Rol del sistema (Administrador): no se puede eliminar y tiene acceso total.
+  isSystem    Boolean          @default(false) @map("is_system")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  users       User[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  /// Clave que consulta el código, p. ej. "users.create".
+  key         String           @unique @db.VarChar(80)
+  name        String           @db.VarChar(120)
+  description String?          @db.VarChar(255)
+  module      String           @db.VarChar(60)
+  /// Permiso usado por la aplicación: no se puede eliminar ni cambiar su clave.
+  isSystem    Boolean          @default(false) @map("is_system")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  roles       RolePermission[]
+
+  @@index([module])
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String     @map("role_id")
+  permissionId String     @map("permission_id")
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model Session {
+  /// SHA-256 del token que viaja en la cookie; el token en claro nunca se guarda.
+  id        String   @id @db.VarChar(64)
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  userAgent String?  @map("user_agent") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+enum IntegrationStatus {
+  /// Guardada pero aún sin probar.
+  PENDING   @map("pending")
+  /// La última prueba o sincronización respondió bien.
+  CONNECTED @map("connected")
+  /// La última prueba o sincronización falló (ver `last_error`).
+  ERROR     @map("error")
+
+  @@map("integration_status")
+}
+
+/// Conexiones con servicios externos (Pancake POS, Shopify…). Cada fila es una cuenta/tienda conectada.
+/// PENDIENTE: cifrar en reposo api_key, api_secret y access_token. Ninguno se envía al navegador.
+model Integration {
+  id             String            @id @default(cuid())
+  /// Proveedor del catálogo (lib/integrations/catalog.ts), p. ej. "pancake" o "shopify".
+  provider       String            @db.VarChar(40)
+  /// Nombre interno para reconocer la conexión, p. ej. "Tienda principal".
+  name           String            @db.VarChar(120)
+  /// Identificador de la cuenta en el proveedor (Pancake: shop_id; Shopify: dominio .myshopify.com).
+  externalId     String?           @map("external_id") @db.VarChar(120)
+  /// Credencial principal (Pancake: api_key; Shopify: Client ID o token shpat_ de una app antigua).
+  apiKey         String?           @map("api_key")
+  /// Credencial secundaria (Shopify: Client secret).
+  apiSecret      String?           @map("api_secret")
+  /// Token de acceso obtenido del proveedor y reutilizado hasta que vence (Shopify: 24 h).
+  accessToken    String?           @map("access_token")
+  tokenExpiresAt DateTime?         @map("token_expires_at")
+  /// Ajustes propios del proveedor (zona horaria, filtros por defecto, etc.).
+  settings       Json?
+  status         IntegrationStatus @default(PENDING)
+  active         Boolean           @default(true)
+  lastSyncAt     DateTime?         @map("last_sync_at")
+  lastError      String?           @map("last_error") @db.VarChar(500)
+  createdById    String?           @map("created_by_id")
+  createdBy      User?             @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+
+  @@unique([provider, externalId])
+  @@index([provider])
+  @@index([createdById])
+  @@map("integrations")
+}

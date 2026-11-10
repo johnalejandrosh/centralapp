@@ -1,0 +1,757 @@
+// Tableros analíticos (Tablero 1: Shopify).
+//
+// Colores de datos validados con el validador de paletas (contraste ≥ 3:1 sobre la tarjeta en
+// claro y oscuro). Son independientes del tema de la app: el amarillo de "Sol" no llega a 3:1
+// sobre blanco, así que las marcas de datos usan un azul validado y el tema queda para la UI.
+//   serie:        #2a78d6 claro / #3987e5 oscuro
+//   comparación:  #898781 (gris de baja jerarquía; 3,6:1 claro / 4,8:1 oscuro)
+//   secuencial:   un solo tono, de claro a oscuro; en modo oscuro se invierte el ancla.
+
+:root,
+[data-coreui-theme="light"] {
+  --viz-series: #2a78d6;
+  --viz-series-rgb: 42, 120, 214;
+  --viz-deemph: #898781;
+  --viz-grid: #e8e6e1;
+  --viz-axis: #c3c2b7;
+  --viz-muted: var(--cui-secondary-color);
+  --viz-seq-0: var(--cui-tertiary-bg);
+  --viz-seq-1: #cde2fb;
+  --viz-seq-2: #9ec5f4;
+  --viz-seq-3: #6da7ec;
+  --viz-seq-4: #3987e5;
+  --viz-seq-5: #256abf;
+  --viz-seq-6: #184f95;
+}
+
+[data-coreui-theme="dark"] {
+  --viz-series: #3987e5;
+  --viz-series-rgb: 57, 135, 229;
+  --viz-deemph: #898781;
+  --viz-grid: #2c2c2a;
+  --viz-axis: #4a4945;
+  --viz-seq-0: rgba(255, 255, 255, 0.05);
+  --viz-seq-1: #0d366b;
+  --viz-seq-2: #184f95;
+  --viz-seq-3: #256abf;
+  --viz-seq-4: #3987e5;
+  --viz-seq-5: #6da7ec;
+  --viz-seq-6: #9ec5f4;
+}
+
+// ---------------------------------------------------------------- Marco del tablero
+// Al recargar se conserva el último render atenuado: sin parpadeo ni saltos de diseño.
+.analytics-board {
+  .board-kpis,
+  .board-grid {
+    transition: opacity 0.2s;
+  }
+
+  &.is-loading {
+    .board-kpis,
+    .board-grid {
+      opacity: 0.55;
+    }
+  }
+}
+
+.board-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+
+  &__store {
+    width: auto;
+    min-width: 10rem;
+  }
+
+  &__range .nav-link {
+    padding: 0.3125rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .form-switch {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  &__spend {
+    position: relative;
+    width: 12.5rem;
+
+    .form-control {
+      padding-inline-start: 1.5rem;
+    }
+  }
+
+  &__prefix {
+    position: absolute;
+    inset-inline-start: 0.625rem;
+    top: 50%;
+    translate: 0 -50%;
+    font-size: 0.875rem;
+    color: var(--cui-tertiary-color);
+    pointer-events: none;
+  }
+
+}
+
+.board-custom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--cui-border-radius-lg);
+  background: var(--cui-tertiary-bg);
+
+  .form-label {
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+  }
+}
+
+.board-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.8125rem;
+  color: var(--cui-secondary-color);
+
+  &__info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.125rem 1rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+.board-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.board-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  max-width: 100%;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid rgba(var(--viz-series-rgb), 0.35);
+  border-radius: 50rem;
+  background: rgba(var(--viz-series-rgb), 0.08);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--cui-emphasis-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(var(--viz-series-rgb), 0.16);
+  }
+
+  &--clear {
+    border-color: transparent;
+    background: transparent;
+    color: var(--cui-secondary-color);
+
+    &:hover,
+    &:focus-visible {
+      background: var(--cui-tertiary-bg);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- KPIs
+// 4 a 6 indicadores en una fila en escritorio; dos por fila en el celular.
+.board-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  container-type: inline-size;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--cui-border-color-translucent);
+  border-radius: var(--cui-border-radius-lg);
+  background: var(--app-card-bg);
+
+  &__main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.25rem 0.5rem;
+  }
+
+  &__label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--cui-secondary-color);
+  }
+
+  &__spark {
+    flex: none;
+    width: 5rem;
+    height: 1.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  // Cifra grande en la tipografía de UI, con dígitos proporcionales.
+  &__value {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    white-space: nowrap;
+    color: var(--cui-emphasis-color);
+  }
+
+  &__delta {
+    font-size: 0.8125rem;
+  }
+
+  &__change {
+    font-weight: 600;
+
+    &.is-good {
+      color: var(--cui-success-text-emphasis);
+    }
+
+    &.is-bad {
+      color: var(--cui-danger-text-emphasis);
+    }
+
+    &.is-neutral {
+      color: var(--cui-secondary-color);
+    }
+  }
+
+  &__vs {
+    color: var(--cui-tertiary-color);
+  }
+}
+
+// Tarjeta angosta (6 indicadores o celular): la tendencia siempre debajo de la cifra y la
+// referencia del período en su propia línea, para que todas se vean iguales.
+@container (max-width: 15rem) {
+  .stat-tile__main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stat-tile__vs {
+    display: block;
+  }
+}
+
+// ---------------------------------------------------------------- Rejilla de gráficas
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.25rem;
+
+  > * {
+    grid-column: span 12;
+    min-width: 0;
+
+    > .viz-card {
+      height: 100%;
+    }
+  }
+
+  // Columna con varias tarjetas apiladas; la última ocupa el alto restante.
+  > .board-grid__stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    > .viz-card {
+      height: auto;
+    }
+
+    > .viz-card:last-child {
+      flex: 1;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    &__wide {
+      grid-column: span 8 !important;
+    }
+
+    &__side {
+      grid-column: span 4 !important;
+    }
+
+    &__half {
+      grid-column: span 6 !important;
+    }
+  }
+}
+
+.viz-card {
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  &__subtitle {
+    margin: 0.125rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--cui-secondary-color);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__body {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+.viz-toggle {
+  padding: 0.1875rem 0.75rem;
+  border: 1px solid var(--cui-border-color);
+  border-radius: 50rem;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--cui-secondary-color);
+
+  &:hover,
+  &:focus-visible,
+  &.is-active {
+    background: var(--cui-tertiary-bg);
+    color: var(--cui-emphasis-color);
+  }
+}
+
+.viz-segmented {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 50rem;
+  background: var(--cui-tertiary-bg);
+
+  button {
+    padding: 0.1875rem 0.75rem;
+    border: 0;
+    border-radius: 50rem;
+    background: transparent;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--cui-secondary-color);
+
+    &:hover {
+      color: var(--cui-emphasis-color);
+    }
+
+    &.is-active {
+      background: var(--app-card-bg);
+      color: var(--cui-emphasis-color);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+.viz-empty {
+  padding: 2rem 1.25rem;
+  border-radius: var(--cui-border-radius-lg);
+  background: var(--cui-tertiary-bg);
+  font-size: 0.875rem;
+  text-align: center;
+  color: var(--cui-secondary-color);
+}
+
+.viz-table-wrap {
+  max-height: 22rem;
+  overflow: auto;
+}
+
+.viz-table {
+  --cui-table-bg: transparent;
+  margin: 0;
+  font-size: 0.8125rem;
+
+  th {
+    font-weight: 600;
+    color: var(--cui-secondary-color);
+    white-space: nowrap;
+  }
+
+  td.text-end {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// ---------------------------------------------------------------- Tendencia
+.viz-trend__plot {
+  position: relative;
+  height: 18rem;
+
+  @media (max-width: 575.98px) {
+    height: 15rem;
+  }
+}
+
+.viz-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--cui-secondary-color);
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  &__line {
+    display: inline-block;
+    width: 1rem;
+    height: 2px;
+    border-radius: 1px;
+  }
+}
+
+.viz-tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  min-width: 11rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--cui-border-color);
+  border-radius: 0.5rem;
+  background: var(--app-card-bg);
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.35);
+  font-size: 0.8125rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s;
+
+  &__title {
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--cui-secondary-color);
+
+    &::first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+
+    strong {
+      color: var(--cui-emphasis-color);
+    }
+  }
+
+  &__key {
+    flex: none;
+    width: 0.75rem;
+    height: 2px;
+    border-radius: 1px;
+  }
+
+  &__name {
+    color: var(--cui-secondary-color);
+  }
+}
+
+// ---------------------------------------------------------------- Barras clasificadas
+.ranked {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__hit {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(4rem, 1.15fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.4375rem 0.5rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: inherit;
+    text-align: start;
+  }
+
+  button.ranked__hit {
+    cursor: pointer;
+
+    &:hover {
+      background: var(--cui-tertiary-bg);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--app-focus-border);
+      outline-offset: 1px;
+    }
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__name {
+    overflow: hidden;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--cui-emphasis-color);
+  }
+
+  &__detail {
+    font-size: 0.75rem;
+    color: var(--cui-secondary-color);
+  }
+
+  &__track {
+    display: block;
+    height: 0.75rem;
+  }
+
+  // Barra fina: extremo de datos redondeado (4px) y recta en la línea base.
+  &__bar {
+    display: block;
+    height: 100%;
+    border-radius: 0 4px 4px 0;
+    background: var(--viz-series);
+    transition: width 0.3s ease, background-color 0.2s;
+  }
+
+  &__value {
+    min-width: 4.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    color: var(--cui-emphasis-color);
+  }
+
+  // Con un filtro activo, el elemento elegido conserva el color y el resto pasa a gris.
+  &.has-selection .ranked__bar {
+    background: var(--viz-deemph);
+  }
+
+  &__row.is-selected {
+    .ranked__hit {
+      background: rgba(var(--viz-series-rgb), 0.08);
+    }
+
+    .ranked__bar {
+      background: var(--viz-series);
+    }
+  }
+
+  // Apilada: nombre completo arriba (hasta dos líneas) y la barra a todo el ancho debajo.
+  @mixin stacked {
+    .ranked__hit {
+      grid-template-columns: minmax(0, 1fr) auto;
+      row-gap: 0.375rem;
+    }
+
+    .ranked__track {
+      grid-column: 1 / -1;
+      order: 3;
+    }
+  }
+
+  &--stacked {
+    @include stacked;
+
+    .ranked__name {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      white-space: normal;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    @include stacked;
+  }
+}
+
+.board-note {
+  margin: 1rem 0 0;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--cui-border-radius);
+  background: var(--cui-tertiary-bg);
+  font-size: 0.8125rem;
+  color: var(--cui-secondary-color);
+
+  strong {
+    color: var(--cui-emphasis-color);
+  }
+}
+
+// ---------------------------------------------------------------- Mapa de calor
+.heatmap {
+  &__readout {
+    min-height: 2.75em;
+    margin-bottom: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--cui-secondary-color);
+
+    strong {
+      color: var(--cui-emphasis-color);
+      text-transform: none;
+    }
+  }
+
+  &__scroll {
+    overflow-x: auto;
+    padding: 2px;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 2.25rem repeat(24, minmax(0.875rem, 1fr));
+    gap: 2px;
+    min-width: 28rem;
+  }
+
+  &__row {
+    display: contents;
+  }
+
+  &__hour {
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: var(--cui-tertiary-color);
+  }
+
+  &__day {
+    align-self: center;
+    font-size: 0.75rem;
+    color: var(--cui-secondary-color);
+  }
+
+  &__cell {
+    height: 1.375rem;
+    border-radius: 3px;
+    background: var(--viz-seq-0);
+    outline: 0;
+
+    &:hover,
+    &.is-active,
+    &:focus-visible {
+      box-shadow: 0 0 0 2px var(--app-card-bg), 0 0 0 4px var(--cui-emphasis-color);
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--cui-secondary-color);
+  }
+
+  &__swatch {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 3px;
+    background: var(--viz-seq-0);
+  }
+
+  &__tz {
+    margin-inline-start: auto;
+    color: var(--cui-tertiary-color);
+  }
+
+  @for $i from 0 through 6 {
+    .step-#{$i} {
+      background: var(--viz-seq-#{$i});
+    }
+  }
+}
+
+// ---------------------------------------------------------------- Origen y pedidos
+.origin-single {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+
+  &__value {
+    font-size: 2.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--cui-emphasis-color);
+  }
+
+  &__label {
+    color: var(--cui-secondary-color);
+  }
+}
+
+.viz-orders {
+  font-size: 0.875rem;
+
+  // Productos en hasta dos líneas para que la columna Total siempre quepa.
+  &__products {
+    display: -webkit-box;
+    max-width: 16rem;
+    min-width: 10rem;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}
