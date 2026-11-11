@@ -6,6 +6,8 @@
 
 export const PERMISSIONS = {
   DASHBOARD_VIEW: "dashboard.view",
+  TABLERO1_VIEW: "tablero1.view",
+  TABLERO2_VIEW: "tablero2.view",
   USERS_READ: "users.read",
   USERS_CREATE: "users.create",
   USERS_UPDATE: "users.update",
@@ -29,6 +31,8 @@ export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 export const SYSTEM_PERMISSIONS: { key: PermissionKey; name: string; module: string; description: string }[] = [
   { key: "dashboard.view", name: "Ver resumen", module: "Resumen", description: "Acceso al panel de resumen." },
+  { key: "tablero1.view", name: "Ver Tablero 1", module: "Tableros", description: "Acceso al Tablero 1 (analítica de Shopify)." },
+  { key: "tablero2.view", name: "Ver Tablero 2", module: "Tableros", description: "Acceso al Tablero 2." },
   { key: "users.read", name: "Ver usuarios", module: "Usuarios", description: "Consultar la lista de usuarios." },
   { key: "users.create", name: "Crear usuarios", module: "Usuarios", description: "Dar de alta nuevos usuarios." },
   { key: "users.update", name: "Editar usuarios", module: "Usuarios", description: "Modificar datos, rol y estado de usuarios." },

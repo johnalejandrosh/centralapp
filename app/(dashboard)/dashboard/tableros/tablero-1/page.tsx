@@ -32,8 +32,8 @@ export default function Tablero1Page() {
 
 async function BoardSection() {
   const user = await requireUser();
-  if (!hasPermission(user, PERMISSIONS.DASHBOARD_VIEW)) {
-    return <NoAccess permission={PERMISSIONS.DASHBOARD_VIEW} />;
+  if (!hasPermission(user, PERMISSIONS.TABLERO1_VIEW)) {
+    return <NoAccess permission={PERMISSIONS.TABLERO1_VIEW} />;
   }
 
   const stores = (await listIntegrations("shopify")).filter((integration) => integration.active && integration.externalId && integration.apiKeyHint);

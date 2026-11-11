@@ -36,8 +36,8 @@ export const navigation: NavEntry[] = [
     label: "Tableros",
     icon: cilChartPie,
     items: [
-      { kind: "link", label: "Tablero 1", href: "/dashboard/tableros/tablero-1" },
-      { kind: "link", label: "Tablero 2", href: "/dashboard/tableros/tablero-2" },
+      { kind: "link", label: "Tablero 1", href: "/dashboard/tableros/tablero-1", permission: PERMISSIONS.TABLERO1_VIEW },
+      { kind: "link", label: "Tablero 2", href: "/dashboard/tableros/tablero-2", permission: PERMISSIONS.TABLERO2_VIEW },
     ],
   },
   { kind: "title", label: "Administración" },

@@ -1,7 +1,7 @@
 /**
  * GET /api/shopify/analytics — pedidos compactos de Shopify para el tablero analítico.
  *
- * Exige sesión y el permiso `dashboard.view`. Las credenciales salen de la tabla `integrations`
+ * Exige sesión y el permiso `tablero1.view` (lo consume el Tablero 1). Las credenciales salen de la tabla `integrations`
  * y la consulta a Shopify se hace en el servidor.
  *
  * Parámetros:
@@ -24,7 +24,7 @@ function fail(status: number, error: string) {
 export async function GET(request: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return fail(401, "Tu sesión expiró. Vuelve a iniciar sesión.");
-  if (!hasPermission(user, PERMISSIONS.DASHBOARD_VIEW)) return fail(403, "No tienes el permiso dashboard.view.");
+  if (!hasPermission(user, PERMISSIONS.TABLERO1_VIEW)) return fail(403, "No tienes el permiso tablero1.view.");
 
   const params = request.nextUrl.searchParams;
   const preset = params.get("preset");
